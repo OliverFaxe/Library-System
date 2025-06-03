@@ -1,5 +1,6 @@
 package com.example.Library_System.Loan;
 
+
 import com.example.Library_System.Book.Book;
 import com.example.Library_System.Book.BookRepository;
 import com.example.Library_System.User.User;
@@ -39,7 +40,7 @@ public class LoanService {
 
         // 3. Kollar tillgänglighet på boken
         if (book.getAvailableCopies() <= 0) {
-            throw new RuntimeException("Book is not available");
+            throw new RuntimeException("No copies available");
         }
 
         // 4. Skapar lånet
