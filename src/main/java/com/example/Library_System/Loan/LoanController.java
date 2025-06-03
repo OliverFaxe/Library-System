@@ -13,7 +13,7 @@ public class LoanController {
         this.loanService = loanService;
     }
 
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     public List<Loan> getUserLoans(@PathVariable Long userId) {
         return loanService.getUserLoans(userId);
     }

@@ -1,7 +1,10 @@
 package com.example.Library_System.Author;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,25 +18,37 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
+//    @GetMapping Innan jag använde ResponseEntity<>
+//    public List<AuthorDTO> getAllAuthors() {
+//        return authorService.getAllAuthors()
+//                .stream()
+//                .map(authorService :: mapToAuthorDTO)
+//                .toList();
+//    }
+
     @GetMapping
-    public List<AuthorDTO> getAllAuthors() {
-        return authorService.getAllAuthors()
+    public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
+        return ResponseEntity.ok(authorService.getAllAuthors()
                 .stream()
                 .map(authorService :: mapToAuthorDTO)
-                .toList();
+                .toList());
     }
 
     @GetMapping("/lastname") // RequestParam är ?lastName=
-    public List<AuthorDTO> getAuthorByLastNameContaining(@RequestParam String lastName) {
-        return authorService.getAuthorByLastNameContaining(lastName)
+    public ResponseEntity<List<AuthorDTO>> getAuthorByLastNameContaining(@RequestParam String lastName) {
+        return ResponseEntity.ok(authorService.getAuthorByLastNameContaining(lastName)
                 .stream()
                 .map(authorService :: mapToAuthorDTO)
-                .toList();
+                .toList());
     }
 
     @PostMapping
-    public Author createAuthor(@RequestBody Author newAuthor){
-        return authorService.createAuthor(newAuthor);
+    public ResponseEntity<Author> createAuthor(@RequestBody Author author){
+        Author createdAuthor = authorService.createAuthor(author);
+
+        URI location = URI.create("/authors/" + createdAuthor.getAuthorId());
+
+        return ResponseEntity.created(location).body(createdAuthor);
     }
 
 }

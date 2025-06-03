@@ -6,6 +6,7 @@ import com.example.Library_System.Book.BookService;
 import com.example.Library_System.Loan.Loan;
 import com.example.Library_System.Loan.LoanRepository;
 import com.example.Library_System.Loan.LoanService;
+import com.example.Library_System.Loan.LoanValidator;
 import com.example.Library_System.User.User;
 import com.example.Library_System.User.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,7 @@ public class LoanServiceTest {
     private LoanRepository loanRepositoryMock;
     private UserRepository userRepositoryMock;
     private BookRepository bookRepositoryMock;
+    private LoanValidator loanValidatorMock;
 
     @BeforeEach
     void setUp() {
@@ -33,8 +35,9 @@ public class LoanServiceTest {
         loanRepositoryMock = mock(LoanRepository.class);
         bookRepositoryMock = mock(BookRepository.class);
         userRepositoryMock = mock(UserRepository.class);
+        loanValidatorMock = mock(LoanValidator.class);
 
-        loanService = new LoanService(loanRepositoryMock, bookRepositoryMock, userRepositoryMock);
+        loanService = new LoanService(loanRepositoryMock, bookRepositoryMock, userRepositoryMock, loanValidatorMock);
     }
 
     @Test

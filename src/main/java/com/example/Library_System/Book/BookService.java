@@ -10,9 +10,11 @@ import java.util.List;
 public class BookService {
 
     BookRepository bookRepository;
+    BookValidator bookValidator;
 
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, BookValidator bookValidator) {
         this.bookRepository = bookRepository;
+        this.bookValidator = bookValidator;
     }
 
     public List<Book> getAllBooks() {
@@ -20,10 +22,12 @@ public class BookService {
     }
 
     public List<Book> getBookByTitleContaining(String title){
+        bookValidator.ifNoResultFound(title);
         return bookRepository.getBookByTitleContaining(title);
     }
 
     public Book postBook(Book newBook){
+        bookValidator.validateNewBook(newBook);
         return bookRepository.save(newBook);
     }
 

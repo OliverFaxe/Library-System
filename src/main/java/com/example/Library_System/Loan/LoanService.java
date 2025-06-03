@@ -17,44 +17,39 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    private final LoanValidator loanValidator;
 
-    public LoanService(LoanRepository loanRepository, BookRepository bookRepository, UserRepository userRepository) {
+    public LoanService(LoanRepository loanRepository, BookRepository bookRepository, UserRepository userRepository, LoanValidator loanValidator) {
         this.loanRepository = loanRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
+        this.loanValidator = loanValidator;
     }
 
     public List<Loan> getUserLoans(Long userId) {
+        loanValidator.validateIfUserExists(userId);
         return loanRepository.findByUser_UserId(userId);
     }
 
     public Loan createLoan(Long userId, Long bookId){
 
-        // 1. Kollar user
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        loanValidator.validateCreateLoan(userId, bookId);
 
-        // 2. Kollar book
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+        User user = userRepository.findById(userId).get();
+        Book book = bookRepository.findById(bookId).get();
 
-        // 3. Kollar tillgänglighet på boken
-        if (book.getAvailableCopies() <= 0) {
-            throw new RuntimeException("No copies available");
-        }
-
-        // 4. Skapar lånet
+        // 1. Skapar lånet
         Loan loan = new Loan();
         loan.setUser(user);
         loan.setBook(book);
         loan.setBorrowedDate(new Date());
 
-        // 5. 14 dagar från nu skall boken returneras
+        // 2. 14 dagar från nu skall boken returneras
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 14);
         loan.setDueDate(calendar.getTime());
 
-        // 6. Spara lånet
+        // 3. Spara lånet
         book.setAvailableCopies(book.getAvailableCopies() - 1);
         bookRepository.save(book);
 
@@ -62,8 +57,9 @@ public class LoanService {
     }
 
     public Loan returnBook(Long loanId){
+
         // 1. hämtar lånet och ändrar return date till nu.
-        Loan loan = loanRepository.getReferenceById(loanId);
+        Loan loan = loanValidator.doubleCheckLoanReturnOrExtend(loanId);
 
         loan.setReturnedDate(new Date());
 
@@ -77,12 +73,8 @@ public class LoanService {
     }
 
     public Loan extendLoan(Long loanId){
-        Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException("Loan not found"));
 
-        if (loan.getDueDate() == null) {
-            loan.setDueDate(new Date());
-        }
+        Loan loan = loanValidator.doubleCheckLoanReturnOrExtend(loanId);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(loan.getDueDate());

@@ -14,7 +14,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping // title?title=
+    @GetMapping
     public List<BookDTO> getAllBooks() {
         return bookService.getAllBooks()
                 .stream()
