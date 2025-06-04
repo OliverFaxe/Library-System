@@ -13,10 +13,12 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserValidator userValidator;
 
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserValidator userValidator) {
         this.userRepository = userRepository;
+        this.userValidator = userValidator;
     }
 
     public List<UserDTO> findAllUsers() {
@@ -37,10 +39,12 @@ public class UserService {
     }
 
     public List<User> findUserByEmailContaining(String email) {
+        userValidator.anyUserWithThatEmail(email);
         return userRepository.findUserByEmailContaining(email);
     }
 
     public User createUser(UserCreateDTO dto){
+        userValidator.validateCreateUser(dto);
         User user = new User();
         user.setFirstName(dto.firstName);
         user.setLastName(dto.lastName);
