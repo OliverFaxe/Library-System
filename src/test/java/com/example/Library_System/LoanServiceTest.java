@@ -11,7 +11,10 @@ import com.example.Library_System.User.User;
 import com.example.Library_System.User.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
 import java.util.Optional;
@@ -21,22 +24,27 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class LoanServiceTest {
 
+
     private LoanService loanService;
+
+    @Mock
     private LoanRepository loanRepositoryMock;
+
+    @Mock
     private UserRepository userRepositoryMock;
+
+    @Mock
     private BookRepository bookRepositoryMock;
+
+
     private LoanValidator loanValidatorMock;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        loanRepositoryMock = mock(LoanRepository.class);
-        bookRepositoryMock = mock(BookRepository.class);
-        userRepositoryMock = mock(UserRepository.class);
-        loanValidatorMock = mock(LoanValidator.class);
-
+        loanValidatorMock = new LoanValidator(loanRepositoryMock, userRepositoryMock, bookRepositoryMock);
         loanService = new LoanService(loanRepositoryMock, bookRepositoryMock, userRepositoryMock, loanValidatorMock);
     }
 
@@ -68,7 +76,7 @@ public class LoanServiceTest {
     }
 
     @Test
-    void testAvaliableCopiesNotAvaliable() {
+    void testAvailableCopiesNotAvailable() {
         // Arrange
         Book book = new Book();
         book.setBookId(1L);

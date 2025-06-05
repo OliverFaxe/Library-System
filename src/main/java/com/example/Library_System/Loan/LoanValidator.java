@@ -15,6 +15,7 @@ import java.util.Date;
 @Component
 public class LoanValidator {
 
+
     LoanRepository loanRepository;
     UserRepository userRepository;
     BookRepository bookRepository;
@@ -50,9 +51,8 @@ public class LoanValidator {
 
         // 3. Kollar tillgänglighet på boken
         if (book.getAvailableCopies() <= 0) {
-            throw new RuntimeException("No copies available");
+            throw new RuntimeException("No copies of this book available! Please try again later");
         }
-
     }
 
     public Loan doubleCheckLoanReturnOrExtend(Long loanId) {
